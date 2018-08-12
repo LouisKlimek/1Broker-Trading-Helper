@@ -41,7 +41,7 @@ namespace WindowsFormsApp1
 
                 if (jtestKey.error == true)
                 {
-                    MessageBox.Show("Fehler: "+ jtestKey.error_code);
+                    MessageBox.Show("Error: "+ jtestKey.error_code);
                     radioButton1.Enabled = false;
                     radioButton2.Enabled = false;
                     comboBox1.Enabled = false;
@@ -334,7 +334,7 @@ namespace WindowsFormsApp1
                 }
             }
         }
-
+        //NOT USED
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             if (textBox1.Text == "-")
@@ -393,6 +393,9 @@ namespace WindowsFormsApp1
                 }
             }
         }
+        //NOT USED end
+
+
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             button3.Text = "LONG ERSTELLEN";
@@ -548,7 +551,7 @@ namespace WindowsFormsApp1
 
                             if (jorder.error == true)
                             {
-                                MessageBox.Show("Fehler: "+jorder.error_code);
+                                MessageBox.Show("Error: "+jorder.error_code);
 
                                 setUserInfo();
                                 label1.Text = cpuTimeLeftPercent + "%";
@@ -576,7 +579,7 @@ namespace WindowsFormsApp1
 
                                 if (jorder.error == true)
                                 {
-                                    MessageBox.Show("Fehler: " + jorder.error_code);
+                                    MessageBox.Show("Error: " + jorder.error_code);
 
                                     setUserInfo();
                                     label1.Text = cpuTimeLeftPercent + "%";
@@ -610,7 +613,7 @@ namespace WindowsFormsApp1
 
             startApp();
 
-            MessageBox.Show("Starte das Programm neu damit die Einstellungen wirksam werden");
+            MessageBox.Show("Restart the program for the settings to take effect");
         }
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
