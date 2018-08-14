@@ -347,7 +347,7 @@ namespace WindowsFormsApp1
         }
         //NOT USED
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
-        {
+        {/*
             if (textBox1.Text == "-")
             {
                 textBox1.Text = "";
@@ -372,11 +372,11 @@ namespace WindowsFormsApp1
                     float v = x / btckurs;
                     //textBox2.Text = v.ToString();
                 }
-            }
+            }*/
         }
 
         private void textBox2_KeyUp(object sender, KeyEventArgs e)
-        {
+        {/*
             //BTC=>USD
             if (textBox2.Text == "-")
             {
@@ -402,12 +402,12 @@ namespace WindowsFormsApp1
                     float v = x * btckurs;
                     //textBox1.Text = v.ToString();
                 }
-            }
+            }*/
         }
-        //NOT USED end
+    //NOT USED end
 
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+    private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             button3.Text = "CREATE LONG";
             button3.Enabled = true;
@@ -542,8 +542,15 @@ namespace WindowsFormsApp1
                         var jbtcKurs = JsonConvert.DeserializeObject<dynamic>(btcKurs);
 
                         float btckurs = jbtcKurs.response[0].ask;
+                        try
+                        {
+                            float x = float.Parse(textBox1.Text, CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
 
-                        float x = float.Parse(textBox1.Text, CultureInfo.InvariantCulture);
+                        }
+                        
                         //float orderMargin = x / btckurs;
                         string orderMargin = textBox1.Text;
 
