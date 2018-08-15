@@ -508,8 +508,8 @@ namespace WindowsFormsApp1
                 }
             }
         }
-        public static int categorySymbolNumber;
 
+        public static int categorySymbolNumber;
         private void button3_Click(object sender, EventArgs e)
         {
             if (comboBox2.Text == "")
