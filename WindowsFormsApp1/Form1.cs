@@ -507,10 +507,6 @@ namespace WindowsFormsApp1
                     textBox3.Text = "1";
                 }
             }
-            else
-            {
-                //textBox3.Text = "1";
-            }
         }
         public static int categorySymbolNumber;
 
