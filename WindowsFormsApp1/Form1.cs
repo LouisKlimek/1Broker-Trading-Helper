@@ -528,7 +528,6 @@ namespace WindowsFormsApp1
                 }
                 else
                 {
-                    //VALIDATET
                     using (var webClient = new System.Net.WebClient())
                     {
                         string orderDirection;
