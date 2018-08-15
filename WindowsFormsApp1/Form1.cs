@@ -498,7 +498,6 @@ namespace WindowsFormsApp1
             e.Handled = (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar));
             } 
         }
-
         private void textBox3_KeyUp(object sender, KeyEventArgs e)
         {
             if (textBox3.Text != "")
