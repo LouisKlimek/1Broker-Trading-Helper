@@ -217,15 +217,30 @@ namespace WindowsFormsApp1
 
                 for (int s = 0; s < jopenOrd.response.Count; s++)
                 {
+                    var openOrderPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
+
+                    var jopenOrderPrice = JsonConvert.DeserializeObject<dynamic>(openOrderPrice);
+
+
                     DataGridViewRow row = (DataGridViewRow)dataGridView2.Rows[s].Clone();
                     row.Cells[0].Value = jopenOrd.response[s].symbol.ToString();
                     row.Cells[1].Value = jopenOrd.response[s].margin.ToString() + " BTC";
                     row.Cells[2].Value = jopenOrd.response[s].leverage.ToString();
                     row.Cells[3].Value = jopenOrd.response[s].order_type_parameter.ToString();
-                    row.Cells[4].Value = jopenOrd.response[s].stop_loss.ToString();
-                    row.Cells[5].Value = jopenOrd.response[s].take_profit.ToString();
-                    row.Cells[6].Value = jopenOrd.response[s].direction.ToString().ToUpper();
-                    row.Cells[7].Value = "Cancel";
+                    row.Cells[5].Value = jopenOrd.response[s].stop_loss.ToString();
+                    row.Cells[6].Value = jopenOrd.response[s].take_profit.ToString();
+                    row.Cells[7].Value = jopenOrd.response[s].direction.ToString().ToUpper();
+                    row.Cells[8].Value = "Cancel";
+
+                    if (jopenOrd.response[s].direction.ToString().ToUpper() == "LONG")
+                    {
+                        row.Cells[4].Value = jopenOrderPrice.response[0].bid;
+                    }
+                    else
+                    {
+                        row.Cells[4].Value = jopenOrderPrice.response[0].ask;
+                    }
+
                     dataGridView2.Rows.Add(row);
 
                     if (s == (jopenOrd.response.Count - 1))
@@ -589,7 +604,7 @@ namespace WindowsFormsApp1
                             stopLoss = "";
                         }
 
-                        var order = webClient.DownloadString("https://1broker.com/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=" + limitBuy + "&referral_id=" + refID + takeProfit + stopLoss);
+                        var order = webClient.DownloadString("https://1broker.com/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=" + limitBuy + takeProfit + stopLoss /*+ "&referral_id=" + refID*/);
                             var jorder = JsonConvert.DeserializeObject<dynamic>(order);
 
                             if (jorder.error == true)
@@ -684,7 +699,7 @@ namespace WindowsFormsApp1
             label1.Invoke(new Action(() => label1.Text = cpuTimeLeftPercent + "%"));
             labelBalance.Invoke(new Action(() => labelBalance.Text = balance + " BTC"));
 
-            dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Clear()));
+            
 
             dataGridView1.DefaultCellStyle.SelectionBackColor = SystemColors.MenuBar;
             dataGridView1.DefaultCellStyle.SelectionForeColor = Color.Black;
@@ -699,58 +714,66 @@ namespace WindowsFormsApp1
 
             using (var webClient = new System.Net.WebClient())
             {
-                var openPos = webClient.DownloadString("https://1broker.com/api/v2/position/open.php?token=" + apiKey);
-
-                var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
-
-                if (jopenPos.response.Count < 1)
+                try
                 {
-                    dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
-                }
-                else
-                {
+                    var openPos = webClient.DownloadString("https://1broker.com/api/v2/position/open.php?token=" + apiKey);
+                    var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
 
-                    for (int s = 0; s < jopenPos.response.Count; s++)
+                    dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Clear()));
+
+                    if (jopenPos.response.Count < 1)
                     {
-                        var openPosPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenPos.response[s].symbol);
+                        dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
+                    }
+                    else
+                    {
 
-                        var jopenPosPrice = JsonConvert.DeserializeObject<dynamic>(openPosPrice);
-
-                        dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = true));
-
-                        DataGridViewRow row = (DataGridViewRow)dataGridView1.Rows[s].Clone();
-                        row.Cells[0].Value = jopenPos.response[s].symbol.ToString();
-                        row.Cells[1].Value = jopenPos.response[s].margin.ToString() + " BTC";
-                        row.Cells[2].Value = jopenPos.response[s].leverage.ToString();
-                        row.Cells[4].Value = jopenPos.response[s].profit_loss_percent.ToString() + "%";
-                        row.Cells[3].Value = jopenPos.response[s].entry_price.ToString();
-                        row.Cells[6].Value = jopenPos.response[s].stop_loss.ToString();
-                        row.Cells[7].Value = jopenPos.response[s].take_profit.ToString();
-
-                        if (jopenPos.response[s].direction.ToString().ToUpper() == "LONG")
+                        for (int s = 0; s < jopenPos.response.Count; s++)
                         {
-                            row.Cells[5].Value = jopenPosPrice.response[0].bid;
-                        }
-                        else
-                        {
-                            row.Cells[5].Value = jopenPosPrice.response[0].ask;
-                        }
+                            var openPosPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenPos.response[s].symbol);
+
+                            var jopenPosPrice = JsonConvert.DeserializeObject<dynamic>(openPosPrice);
+
+                            dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = true));
+
+                            DataGridViewRow row = (DataGridViewRow)dataGridView1.Rows[s].Clone();
+                            row.Cells[0].Value = jopenPos.response[s].symbol.ToString();
+                            row.Cells[1].Value = jopenPos.response[s].margin.ToString() + " BTC";
+                            row.Cells[2].Value = jopenPos.response[s].leverage.ToString();
+                            row.Cells[4].Value = jopenPos.response[s].profit_loss_percent.ToString() + "%";
+                            row.Cells[3].Value = jopenPos.response[s].entry_price.ToString();
+                            row.Cells[6].Value = jopenPos.response[s].stop_loss.ToString();
+                            row.Cells[7].Value = jopenPos.response[s].take_profit.ToString();
+
+                            if (jopenPos.response[s].direction.ToString().ToUpper() == "LONG")
+                            {
+                                row.Cells[5].Value = jopenPosPrice.response[0].bid;
+                            }
+                            else
+                            {
+                                row.Cells[5].Value = jopenPosPrice.response[0].ask;
+                            }
 
 
-                        row.Cells[8].Value = jopenPos.response[s].direction.ToString().ToUpper();
-                        row.Cells[9].Value = "Close";
+                            row.Cells[8].Value = jopenPos.response[s].direction.ToString().ToUpper();
+                            row.Cells[9].Value = "Close";
 
-                        dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Add(row)));
+                            dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Add(row)));
 
-                        if (s == (jopenPos.response.Count - 1))
-                        {
-                            dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
+                            if (s == (jopenPos.response.Count - 1))
+                            {
+                                dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
+                            }
                         }
                     }
                 }
+                catch
+                {
+
+                }    
             }
 
-            dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Clear()));
+            
 
             GC.Collect();
 
@@ -769,6 +792,8 @@ namespace WindowsFormsApp1
                 {
                     var openOrd = webClient.DownloadString("https://1broker.com/api/v2/order/open.php?token=" + apiKey);
 
+                    dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Clear()));
+
                     var jopenOrd = JsonConvert.DeserializeObject<dynamic>(openOrd);
 
                     if (jopenOrd.response.Count < 1)
@@ -779,6 +804,10 @@ namespace WindowsFormsApp1
                 {
                     for (int s = 0; s < jopenOrd.response.Count; s++)
                     {
+                        var openOrderPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
+
+                        var jopenOrderPrice = JsonConvert.DeserializeObject<dynamic>(openOrderPrice);
+
                         dataGridView2.Invoke(new Action(() => dataGridView2.AllowUserToAddRows = true));
 
                         DataGridViewRow row = (DataGridViewRow)dataGridView2.Rows[s].Clone();
@@ -786,11 +815,19 @@ namespace WindowsFormsApp1
                         row.Cells[1].Value = jopenOrd.response[s].margin.ToString() + " BTC";
                         row.Cells[2].Value = jopenOrd.response[s].leverage.ToString();
                         row.Cells[3].Value = jopenOrd.response[s].order_type_parameter.ToString();
-                        row.Cells[4].Value = jopenOrd.response[s].stop_loss.ToString();
-                        row.Cells[5].Value = jopenOrd.response[s].take_profit.ToString();
-                        row.Cells[6].Value = jopenOrd.response[s].direction.ToString().ToUpper();
-                        row.Cells[7].Value = "Cancel";
+                        row.Cells[5].Value = jopenOrd.response[s].stop_loss.ToString();
+                        row.Cells[6].Value = jopenOrd.response[s].take_profit.ToString();
+                        row.Cells[7].Value = jopenOrd.response[s].direction.ToString().ToUpper();
+                        row.Cells[8].Value = "Cancel";
 
+                        if (jopenOrd.response[s].direction.ToString().ToUpper() == "LONG")
+                        {
+                            row.Cells[4].Value = jopenOrderPrice.response[0].bid;
+                        }
+                        else
+                        {
+                            row.Cells[4].Value = jopenOrderPrice.response[0].ask;
+                        }
 
                         dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Add(row)));
 
@@ -807,7 +844,7 @@ namespace WindowsFormsApp1
         {
             if (dataGridView2.CurrentCell != null)
             {
-                if (dataGridView2.CurrentCell.ColumnIndex == 7)
+                if (dataGridView2.CurrentCell.ColumnIndex == 8)
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
