@@ -33,7 +33,7 @@ namespace WindowsFormsApp1
         {
             using (var webClient = new System.Net.WebClient())
             {
-                var testKey = webClient.DownloadString("https://1broker.com/api/v2/user/details.php?token=" + apiKey);
+                var testKey = webClient.DownloadString("https://1broker.io/api/v2/user/details.php?token=" + apiKey);
 
                 var jtestKey = JsonConvert.DeserializeObject<dynamic>(testKey);
 
@@ -82,8 +82,8 @@ namespace WindowsFormsApp1
                 {
                     webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
 
-                    var userDetail = webClient.DownloadString("https://1broker.com/api/v2/user/details.php?token=" + apiKey);
-                    var cpuTime = webClient.DownloadString("https://1broker.com/api/v2/quota/status.php");
+                    var userDetail = webClient.DownloadString("https://1broker.io/api/v2/user/details.php?token=" + apiKey);
+                    var cpuTime = webClient.DownloadString("https://1broker.io/api/v2/quota/status.php");
 
                     var jUserDetail = JsonConvert.DeserializeObject<dynamic>(userDetail);
                     var jcpuTime = JsonConvert.DeserializeObject<dynamic>(cpuTime);
@@ -129,7 +129,7 @@ namespace WindowsFormsApp1
 
             using (var webClient = new System.Net.WebClient())
             {
-            var openPos = webClient.DownloadString("https://1broker.com/api/v2/position/open.php?token="+apiKey);
+            var openPos = webClient.DownloadString("https://1broker.io/api/v2/position/open.php?token="+apiKey);
 
             var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
 
@@ -141,7 +141,7 @@ namespace WindowsFormsApp1
 
             for (int s = 0; s < jopenPos.response.Count; s++)
             {
-                var openPosPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token="+apiKey+"&symbols="+ jopenPos.response[s].symbol);
+                var openPosPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token="+apiKey+"&symbols="+ jopenPos.response[s].symbol);
 
                 var jopenPosPrice = JsonConvert.DeserializeObject<dynamic>(openPosPrice);
 
@@ -206,7 +206,7 @@ namespace WindowsFormsApp1
 
             using (var webClient = new System.Net.WebClient())
             {
-                var openOrd = webClient.DownloadString("https://1broker.com/api/v2/order/open.php?token=" + apiKey);
+                var openOrd = webClient.DownloadString("https://1broker.io/api/v2/order/open.php?token=" + apiKey);
 
                 var jopenOrd = JsonConvert.DeserializeObject<dynamic>(openOrd);
 
@@ -217,7 +217,7 @@ namespace WindowsFormsApp1
 
                 for (int s = 0; s < jopenOrd.response.Count; s++)
                 {
-                    var openOrderPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
+                    var openOrderPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
 
                     var jopenOrderPrice = JsonConvert.DeserializeObject<dynamic>(openOrderPrice);
 
@@ -302,7 +302,7 @@ namespace WindowsFormsApp1
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
-                        var symbols = webClient.DownloadString("https://1broker.com/api/v2/market/list.php?token="+apiKey+"&category=forex");
+                        var symbols = webClient.DownloadString("https://1broker.io/api/v2/market/list.php?token="+apiKey+"&category=forex");
 
                         var jsymbols = JsonConvert.DeserializeObject<dynamic>(symbols);
 
@@ -317,7 +317,7 @@ namespace WindowsFormsApp1
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
-                        var symbols = webClient.DownloadString("https://1broker.com/api/v2/market/list.php?token=" + apiKey + "&category=stock");
+                        var symbols = webClient.DownloadString("https://1broker.io/api/v2/market/list.php?token=" + apiKey + "&category=stock");
 
                         var jsymbols = JsonConvert.DeserializeObject<dynamic>(symbols);
 
@@ -332,7 +332,7 @@ namespace WindowsFormsApp1
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
-                        var symbols = webClient.DownloadString("https://1broker.com/api/v2/market/list.php?token=" + apiKey + "&category=index");
+                        var symbols = webClient.DownloadString("https://1broker.io/api/v2/market/list.php?token=" + apiKey + "&category=index");
 
                         var jsymbols = JsonConvert.DeserializeObject<dynamic>(symbols);
 
@@ -347,7 +347,7 @@ namespace WindowsFormsApp1
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
-                        var symbols = webClient.DownloadString("https://1broker.com/api/v2/market/list.php?token=" + apiKey + "&category=COMMODITY");
+                        var symbols = webClient.DownloadString("https://1broker.io/api/v2/market/list.php?token=" + apiKey + "&category=COMMODITY");
 
                         var jsymbols = JsonConvert.DeserializeObject<dynamic>(symbols);
 
@@ -370,7 +370,7 @@ namespace WindowsFormsApp1
             using (var webClient = new System.Net.WebClient())
             {
                 //USD=>BTC
-                var btcKurs = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
+                var btcKurs = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
 
                 var jbtcKurs = JsonConvert.DeserializeObject<dynamic>(btcKurs);
 
@@ -399,7 +399,7 @@ namespace WindowsFormsApp1
             }
             using (var webClient = new System.Net.WebClient())
             {
-                var btcKurs = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
+                var btcKurs = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
 
                 var jbtcKurs = JsonConvert.DeserializeObject<dynamic>(btcKurs);
 
@@ -546,7 +546,7 @@ namespace WindowsFormsApp1
                         string takeProfit;
                         string stopLoss;
 
-                        var btcKurs = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
+                        var btcKurs = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
 
                         var jbtcKurs = JsonConvert.DeserializeObject<dynamic>(btcKurs);
 
@@ -563,7 +563,7 @@ namespace WindowsFormsApp1
                         //float orderMargin = x / btckurs;
                         string orderMargin = textBox1.Text;
 
-                        var category = webClient.DownloadString("https://1broker.com/api/v2/market/list.php?token=" + apiKey + "&category=" + comboBox1.Text);
+                        var category = webClient.DownloadString("https://1broker.io/api/v2/market/list.php?token=" + apiKey + "&category=" + comboBox1.Text);
                         var jcategory = JsonConvert.DeserializeObject<dynamic>(category);
 
                         if (radioButton1.Checked == true)
@@ -604,7 +604,7 @@ namespace WindowsFormsApp1
                             stopLoss = "";
                         }
 
-                        var order = webClient.DownloadString("https://1broker.com/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=" + limitBuy + takeProfit + stopLoss /*+ "&referral_id=" + refID*/);
+                        var order = webClient.DownloadString("https://1broker.io/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=" + limitBuy + takeProfit + stopLoss /*+ "&referral_id=" + refID*/);
                             var jorder = JsonConvert.DeserializeObject<dynamic>(order);
 
                             if (jorder.error == true)
@@ -661,7 +661,7 @@ namespace WindowsFormsApp1
             {
                 using (var webClient = new System.Net.WebClient())
                 {
-                    var category = webClient.DownloadString("https://1broker.com/api/v2/market/list.php?token=" + apiKey + "&category=" + comboBox1.Text);
+                    var category = webClient.DownloadString("https://1broker.io/api/v2/market/list.php?token=" + apiKey + "&category=" + comboBox1.Text);
 
                     var jcategory = JsonConvert.DeserializeObject<dynamic>(category);
 
@@ -671,7 +671,7 @@ namespace WindowsFormsApp1
                         {
                             categorySymbolNumber = i;
 
-                            var symbolPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token="+apiKey+"&symbols="+ jcategory.response[categorySymbolNumber].symbol);
+                            var symbolPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token="+apiKey+"&symbols="+ jcategory.response[categorySymbolNumber].symbol);
 
                             var jsymbolPrice = JsonConvert.DeserializeObject<dynamic>(symbolPrice);
 
@@ -716,7 +716,7 @@ namespace WindowsFormsApp1
             {
                 try
                 {
-                    var openPos = webClient.DownloadString("https://1broker.com/api/v2/position/open.php?token=" + apiKey);
+                    var openPos = webClient.DownloadString("https://1broker.io/api/v2/position/open.php?token=" + apiKey);
                     var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
 
                     dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Clear()));
@@ -730,7 +730,7 @@ namespace WindowsFormsApp1
 
                         for (int s = 0; s < jopenPos.response.Count; s++)
                         {
-                            var openPosPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenPos.response[s].symbol);
+                            var openPosPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenPos.response[s].symbol);
 
                             var jopenPosPrice = JsonConvert.DeserializeObject<dynamic>(openPosPrice);
 
@@ -790,7 +790,7 @@ namespace WindowsFormsApp1
 
                 using (var webClient = new System.Net.WebClient())
                 {
-                    var openOrd = webClient.DownloadString("https://1broker.com/api/v2/order/open.php?token=" + apiKey);
+                    var openOrd = webClient.DownloadString("https://1broker.io/api/v2/order/open.php?token=" + apiKey);
 
                     dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Clear()));
 
@@ -804,7 +804,7 @@ namespace WindowsFormsApp1
                 {
                     for (int s = 0; s < jopenOrd.response.Count; s++)
                     {
-                        var openOrderPrice = webClient.DownloadString("https://1broker.com/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
+                        var openOrderPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
 
                         var jopenOrderPrice = JsonConvert.DeserializeObject<dynamic>(openOrderPrice);
 
@@ -848,7 +848,7 @@ namespace WindowsFormsApp1
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
-                        var openOrd = webClient.DownloadString("https://1broker.com/api/v2/order/open.php?token=" + apiKey);
+                        var openOrd = webClient.DownloadString("https://1broker.io/api/v2/order/open.php?token=" + apiKey);
 
                         var jopenOrd = JsonConvert.DeserializeObject<dynamic>(openOrd);
 
@@ -856,7 +856,7 @@ namespace WindowsFormsApp1
                         {
                             var orderidClose = jopenOrd.response[dataGridView2.CurrentCell.RowIndex].order_id;
 
-                            var closeOrd = webClient.DownloadString("https://1broker.com/api/v2/order/cancel.php?token=" + apiKey + "&order_id=" + orderidClose);
+                            var closeOrd = webClient.DownloadString("https://1broker.io/api/v2/order/cancel.php?token=" + apiKey + "&order_id=" + orderidClose);
 
                             openPositions();
                             openOrders();
@@ -883,7 +883,7 @@ namespace WindowsFormsApp1
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
-                        var openPos = webClient.DownloadString("https://1broker.com/api/v2/position/open.php?token=" + apiKey);
+                        var openPos = webClient.DownloadString("https://1broker.io/api/v2/position/open.php?token=" + apiKey);
 
                         var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
 
@@ -891,7 +891,7 @@ namespace WindowsFormsApp1
                         {
                             var positionidClose = jopenPos.response[dataGridView1.CurrentCell.RowIndex].position_id;
 
-                            var closeOrd = webClient.DownloadString("https://1broker.com/api/v2/position/close.php?token=" + apiKey + "&position_id=" + positionidClose);
+                            var closeOrd = webClient.DownloadString("https://1broker.io/api/v2/position/close.php?token=" + apiKey + "&position_id=" + positionidClose);
 
                             openPositions();
                             openOrders();
