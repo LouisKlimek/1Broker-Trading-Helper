@@ -865,6 +865,7 @@ namespace WindowsFormsApp1
                         {
 
                         }
+
                         setUserInfo();
                         label1.Text = cpuTimeLeftPercent + "%";
                         labelBalance.Text = balance + " BTC";
