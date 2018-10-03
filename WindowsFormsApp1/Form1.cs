@@ -665,14 +665,9 @@ namespace WindowsFormsApp1
         public void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             setUserInfo();
-            //label1.Text = cpuTimeLeftPercent + "%";
-            //labelBalance.Text = balance + " BTC";
 
             label1.Invoke(new Action(() => label1.Text = cpuTimeLeftPercent + "%"));
             labelBalance.Invoke(new Action(() => labelBalance.Text = balance + " BTC"));
-
-            //openPositions();
-            //openOrders();
 
             do
             {
