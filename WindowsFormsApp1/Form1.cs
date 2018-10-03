@@ -17,7 +17,6 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         public static String apiKey = Properties.Settings.Default.apiKey;
-        //public static String apiKey = "A453033e574bd7e2685a7d867283d20c";
 
         public static String refID = "68022";
 
