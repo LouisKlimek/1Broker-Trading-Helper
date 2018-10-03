@@ -17,8 +17,6 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         public static String apiKey = Properties.Settings.Default.apiKey;
-        //public static String apiKey = "A453033e574bd7e2685a7d867283d20c";
-
         public static String refID = "68022";
 
         public static String username;
@@ -41,7 +39,7 @@ namespace WindowsFormsApp1
 
                 if (jtestKey.error == true)
                 {
-                    MessageBox.Show("Fehler: "+ jtestKey.error_code);
+                    MessageBox.Show("Error: "+ jtestKey.error_code);
                     radioButton1.Enabled = false;
                     radioButton2.Enabled = false;
                     comboBox1.Enabled = false;
@@ -60,9 +58,9 @@ namespace WindowsFormsApp1
                     labelBalance.Text = balance + " BTC";
                     labelUsername.Text = username;
 
-                    textBoxApiKey.Text = Properties.Settings.Default.apiKey;
-
                     SetTimer();
+
+                    textBoxApiKey.Text = Properties.Settings.Default.apiKey;
 
                     if (radioButton3.Checked == true)
                     {
@@ -76,22 +74,31 @@ namespace WindowsFormsApp1
             }
         }
 
-        
         private void setUserInfo()
         {
-            using (var webClient = new System.Net.WebClient())
+            try
             {
-                var userDetail = webClient.DownloadString("https://1broker.io/api/v2/user/details.php?token=" + apiKey);
-                var cpuTime = webClient.DownloadString("https://1broker.io/api/v2/quota/status.php");
+                using (var webClient = new System.Net.WebClient())
+                {
+                    webClient.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
 
-                var jUserDetail = JsonConvert.DeserializeObject<dynamic>(userDetail);
-                var jcpuTime = JsonConvert.DeserializeObject<dynamic>(cpuTime);
+                    var userDetail = webClient.DownloadString("https://1broker.io/api/v2/user/details.php?token=" + apiKey);
+                    var cpuTime = webClient.DownloadString("https://1broker.io/api/v2/quota/status.php");
 
-                balance = jUserDetail.response.balance.ToString();
-                username = jUserDetail.response.username.ToString();
-                cpuTimeLeft = jcpuTime.response.cpu_time_left.ToString();
-                cpuTimeLeftPercent = jcpuTime.response.cpu_time_left_percentage.ToString();
+                    var jUserDetail = JsonConvert.DeserializeObject<dynamic>(userDetail);
+                    var jcpuTime = JsonConvert.DeserializeObject<dynamic>(cpuTime);
+
+                    balance = jUserDetail.response.balance.ToString();
+                    username = jUserDetail.response.username.ToString();
+                    cpuTimeLeft = jcpuTime.response.cpu_time_left.ToString();
+                    cpuTimeLeftPercent = jcpuTime.response.cpu_time_left_percentage.ToString();
+                }
             }
+            catch
+            {
+                setUserInfo();
+            }
+
         }
         public void openPositions()
         {
@@ -167,7 +174,9 @@ namespace WindowsFormsApp1
                 }
             }
           }
-        }
+
+
+    }
         public void openOrders()
         {
             do
@@ -208,13 +217,30 @@ namespace WindowsFormsApp1
 
                 for (int s = 0; s < jopenOrd.response.Count; s++)
                 {
+                    var openOrderPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
+
+                    var jopenOrderPrice = JsonConvert.DeserializeObject<dynamic>(openOrderPrice);
+
+
                     DataGridViewRow row = (DataGridViewRow)dataGridView2.Rows[s].Clone();
                     row.Cells[0].Value = jopenOrd.response[s].symbol.ToString();
                     row.Cells[1].Value = jopenOrd.response[s].margin.ToString() + " BTC";
                     row.Cells[2].Value = jopenOrd.response[s].leverage.ToString();
-                    row.Cells[3].Value = jopenOrd.response[s].direction.ToString().ToUpper();
-                    row.Cells[4].Value = "------";
-                    row.Cells[5].Value = "Cancel";
+                    row.Cells[3].Value = jopenOrd.response[s].order_type_parameter.ToString();
+                    row.Cells[5].Value = jopenOrd.response[s].stop_loss.ToString();
+                    row.Cells[6].Value = jopenOrd.response[s].take_profit.ToString();
+                    row.Cells[7].Value = jopenOrd.response[s].direction.ToString().ToUpper();
+                    row.Cells[8].Value = "Cancel";
+
+                    if (jopenOrd.response[s].direction.ToString().ToUpper() == "LONG")
+                    {
+                        row.Cells[4].Value = jopenOrderPrice.response[0].bid;
+                    }
+                    else
+                    {
+                        row.Cells[4].Value = jopenOrderPrice.response[0].ask;
+                    }
+
                     dataGridView2.Rows.Add(row);
 
                     if (s == (jopenOrd.response.Count - 1))
@@ -334,9 +360,9 @@ namespace WindowsFormsApp1
                 }
             }
         }
-
+        //NOT USED
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
-        {
+        {/*
             if (textBox1.Text == "-")
             {
                 textBox1.Text = "";
@@ -361,11 +387,11 @@ namespace WindowsFormsApp1
                     float v = x / btckurs;
                     //textBox2.Text = v.ToString();
                 }
-            }
+            }*/
         }
 
         private void textBox2_KeyUp(object sender, KeyEventArgs e)
-        {
+        {/*
             //BTC=>USD
             if (textBox2.Text == "-")
             {
@@ -391,18 +417,21 @@ namespace WindowsFormsApp1
                     float v = x * btckurs;
                     //textBox1.Text = v.ToString();
                 }
-            }
+            }*/
         }
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+    //NOT USED end
+
+
+    private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            button3.Text = "LONG ERSTELLEN";
+            button3.Text = "CREATE LONG";
             button3.Enabled = true;
             button3.BackColor = Color.FromArgb(69, 191, 85);
         }
 
         private void radioButton2_CheckedChanged_1(object sender, EventArgs e)
         {
-            button3.Text = "SHORT ERSTELLEN";
+            button3.Text = "CREATE SHORT";
             button3.Enabled = true;
             button3.BackColor = Color.FromArgb(255, 61, 46);
         }
@@ -484,7 +513,6 @@ namespace WindowsFormsApp1
             e.Handled = (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar));
             } 
         }
-
         private void textBox3_KeyUp(object sender, KeyEventArgs e)
         {
             if (textBox3.Text != "")
@@ -494,38 +522,44 @@ namespace WindowsFormsApp1
                     textBox3.Text = "1";
                 }
             }
-            else
-            {
-                //textBox3.Text = "1";
-            }
         }
-        public static int categorySymbolNumber;
 
+        public static int categorySymbolNumber;
         private void button3_Click(object sender, EventArgs e)
         {
             if (comboBox2.Text == "")
             {
-                MessageBox.Show("Kein Symbol ausgewählt !");
+                MessageBox.Show("No Symbol selected");
             }
             else
             {
                 if (textBox1.Text == "" || textBox1.Text == "0" || textBox1.Text == "0.00")
                 {
-                    MessageBox.Show("Keine Anzahl gegeben !");
+                    MessageBox.Show("No Margin given");
                 }
                 else
                 {
-                    //VALIDATET
                     using (var webClient = new System.Net.WebClient())
                     {
                         string orderDirection;
+                        string limitBuy;
+                        string takeProfit;
+                        string stopLoss;
+
                         var btcKurs = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=BTCUSD");
 
                         var jbtcKurs = JsonConvert.DeserializeObject<dynamic>(btcKurs);
 
                         float btckurs = jbtcKurs.response[0].ask;
+                        try
+                        {
+                            float x = float.Parse(textBox1.Text, CultureInfo.InvariantCulture);
+                        }
+                        catch
+                        {
 
-                        float x = float.Parse(textBox1.Text, CultureInfo.InvariantCulture);
+                        }
+                        
                         //float orderMargin = x / btckurs;
                         string orderMargin = textBox1.Text;
 
@@ -540,15 +574,42 @@ namespace WindowsFormsApp1
                         {
                             orderDirection = "short";
                         }
-
-                        if (radioButton4.Checked == true)
+                        if (radioButton3.Checked == true)
                         {
-                            var order = webClient.DownloadString("https://1broker.io/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=limit&order_type_parameter=" + textBox2.Text + "&referral_id=" + refID);
+                            limitBuy = "market";
+                        }
+                        else
+                        {
+                            limitBuy = "limit&order_type_parameter=" + textBox2.Text;
+                        }
+
+                        int textBox5Int = 0;
+                        Int32.TryParse(textBox5.Text, out textBox5Int);
+                        if (textBox5Int > 0)
+                        {
+                            takeProfit = "&take_profit=" + textBox5.Text;
+                        }
+                        else
+                        {
+                            takeProfit = "";
+                        }
+                        int textBox4Int = 0;
+                        Int32.TryParse(textBox4.Text, out textBox4Int);
+                        if (textBox4Int > 0)
+                        {
+                            stopLoss = "&stop_loss=" + textBox5.Text;
+                        }
+                        else
+                        {
+                            stopLoss = "";
+                        }
+
+                        var order = webClient.DownloadString("https://1broker.io/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=" + limitBuy + takeProfit + stopLoss /*+ "&referral_id=" + refID*/);
                             var jorder = JsonConvert.DeserializeObject<dynamic>(order);
 
                             if (jorder.error == true)
                             {
-                                MessageBox.Show("Fehler: "+jorder.error_code);
+                                MessageBox.Show("Error: "+jorder.error_code);
 
                                 setUserInfo();
                                 label1.Text = cpuTimeLeftPercent + "%";
@@ -566,38 +627,7 @@ namespace WindowsFormsApp1
                                 openPositions();
                                 openOrders();
                             }
-                        }
-                        else
-                        {
-                            if (radioButton3.Checked == true)
-                            {
-                            var order = webClient.DownloadString("https://1broker.io/api/v2/order/create.php?token=" + apiKey + "&symbol=" + jcategory.response[categorySymbolNumber].symbol + "&margin=" + orderMargin + "&direction=" + orderDirection + "&leverage=" + textBox3.Text + "&order_type=market&referral_id=" + refID);
-                                var jorder = JsonConvert.DeserializeObject<dynamic>(order);
-
-                                if (jorder.error == true)
-                                {
-                                    MessageBox.Show("Fehler: " + jorder.error_code);
-
-                                    setUserInfo();
-                                    label1.Text = cpuTimeLeftPercent + "%";
-                                    labelBalance.Text = balance + " BTC";
-
-                                    openPositions();
-                                    openOrders();
-                                }
-                                else
-                                {
-                                    setUserInfo();
-                                    label1.Text = cpuTimeLeftPercent + "%";
-                                    labelBalance.Text = balance + " BTC";
-
-                                    openPositions();
-                                    openOrders();
-                                }
-                            }
-                        }
-                        
-
+   
                     }
                 }
             }
@@ -669,18 +699,6 @@ namespace WindowsFormsApp1
             label1.Invoke(new Action(() => label1.Text = cpuTimeLeftPercent + "%"));
             labelBalance.Invoke(new Action(() => labelBalance.Text = balance + " BTC"));
 
-            do
-            {
-                foreach (DataGridViewRow row in dataGridView1.Rows)
-                {
-                    try
-                    {
-                        dataGridView1.Rows.Remove(row);
-                    }
-                    catch (Exception) { }
-                }
-            } while (dataGridView1.Rows.Count > 1);
-
             
 
             dataGridView1.DefaultCellStyle.SelectionBackColor = SystemColors.MenuBar;
@@ -696,72 +714,68 @@ namespace WindowsFormsApp1
 
             using (var webClient = new System.Net.WebClient())
             {
-                var openPos = webClient.DownloadString("https://1broker.io/api/v2/position/open.php?token=" + apiKey);
-
-                var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
-
-                if (jopenPos.response.Count < 1)
+                try
                 {
-                    dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
-                }
+                    var openPos = webClient.DownloadString("https://1broker.io/api/v2/position/open.php?token=" + apiKey);
+                    var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
 
-                for (int s = 0; s < jopenPos.response.Count; s++)
-                {
-                    var openPosPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenPos.response[s].symbol);
+                    dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Clear()));
 
-                    var jopenPosPrice = JsonConvert.DeserializeObject<dynamic>(openPosPrice);
-
-                    dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = true));
-
-                    DataGridViewRow row = (DataGridViewRow)dataGridView1.Rows[s].Clone();
-                    row.Cells[0].Value = jopenPos.response[s].symbol.ToString();
-                    row.Cells[1].Value = jopenPos.response[s].margin.ToString() + " BTC";
-                    row.Cells[2].Value = jopenPos.response[s].leverage.ToString();
-                    row.Cells[4].Value = jopenPos.response[s].profit_loss_percent.ToString() + "%";
-                    row.Cells[3].Value = jopenPos.response[s].entry_price.ToString();
-                    row.Cells[6].Value = jopenPos.response[s].stop_loss.ToString();
-                    row.Cells[7].Value = jopenPos.response[s].take_profit.ToString();
-
-                    if (jopenPos.response[s].direction.ToString().ToUpper() == "LONG")
-                    {
-                        row.Cells[5].Value = jopenPosPrice.response[0].bid;
-                    }
-                    else
-                    {
-                        row.Cells[5].Value = jopenPosPrice.response[0].ask;
-                    }
-
-
-                    row.Cells[8].Value = jopenPos.response[s].direction.ToString().ToUpper();
-                    row.Cells[9].Value = "Close";
-
-                    
-
-                    dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Add(row) ));
-
-                    if (s == (jopenPos.response.Count - 1))
+                    if (jopenPos.response.Count < 1)
                     {
                         dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
                     }
+                    else
+                    {
+
+                        for (int s = 0; s < jopenPos.response.Count; s++)
+                        {
+                            var openPosPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenPos.response[s].symbol);
+
+                            var jopenPosPrice = JsonConvert.DeserializeObject<dynamic>(openPosPrice);
+
+                            dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = true));
+
+                            DataGridViewRow row = (DataGridViewRow)dataGridView1.Rows[s].Clone();
+                            row.Cells[0].Value = jopenPos.response[s].symbol.ToString();
+                            row.Cells[1].Value = jopenPos.response[s].margin.ToString() + " BTC";
+                            row.Cells[2].Value = jopenPos.response[s].leverage.ToString();
+                            row.Cells[4].Value = jopenPos.response[s].profit_loss_percent.ToString() + "%";
+                            row.Cells[3].Value = jopenPos.response[s].entry_price.ToString();
+                            row.Cells[6].Value = jopenPos.response[s].stop_loss.ToString();
+                            row.Cells[7].Value = jopenPos.response[s].take_profit.ToString();
+
+                            if (jopenPos.response[s].direction.ToString().ToUpper() == "LONG")
+                            {
+                                row.Cells[5].Value = jopenPosPrice.response[0].bid;
+                            }
+                            else
+                            {
+                                row.Cells[5].Value = jopenPosPrice.response[0].ask;
+                            }
+
+
+                            row.Cells[8].Value = jopenPos.response[s].direction.ToString().ToUpper();
+                            row.Cells[9].Value = "Close";
+
+                            dataGridView1.Invoke(new Action(() => dataGridView1.Rows.Add(row)));
+
+                            if (s == (jopenPos.response.Count - 1))
+                            {
+                                dataGridView1.Invoke(new Action(() => dataGridView1.AllowUserToAddRows = false));
+                            }
+                        }
+                    }
                 }
+                catch
+                {
+
+                }    
             }
 
+            
 
-            do
-                {
-                    foreach (DataGridViewRow row in dataGridView2.Rows)
-                    {
-                        try
-                        {
-                            dataGridView2.Rows.Remove(row);
-                        }
-                        catch (Exception) { }
-                    }
-                } while (dataGridView2.Rows.Count > 1);
-
-                GC.Collect();
-
-                
+            GC.Collect();
 
                 dataGridView2.DefaultCellStyle.SelectionBackColor = SystemColors.MenuBar;
                 dataGridView2.DefaultCellStyle.SelectionForeColor = Color.Black;
@@ -778,43 +792,59 @@ namespace WindowsFormsApp1
                 {
                     var openOrd = webClient.DownloadString("https://1broker.io/api/v2/order/open.php?token=" + apiKey);
 
+                    dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Clear()));
+
                     var jopenOrd = JsonConvert.DeserializeObject<dynamic>(openOrd);
 
                     if (jopenOrd.response.Count < 1)
                     {
                     dataGridView2.Invoke(new Action(() => dataGridView2.AllowUserToAddRows = false));
                 }
-
+                else
+                {
                     for (int s = 0; s < jopenOrd.response.Count; s++)
                     {
+                        var openOrderPrice = webClient.DownloadString("https://1broker.io/api/v2/market/quotes.php?token=" + apiKey + "&symbols=" + jopenOrd.response[s].symbol);
+
+                        var jopenOrderPrice = JsonConvert.DeserializeObject<dynamic>(openOrderPrice);
+
                         dataGridView2.Invoke(new Action(() => dataGridView2.AllowUserToAddRows = true));
 
                         DataGridViewRow row = (DataGridViewRow)dataGridView2.Rows[s].Clone();
                         row.Cells[0].Value = jopenOrd.response[s].symbol.ToString();
                         row.Cells[1].Value = jopenOrd.response[s].margin.ToString() + " BTC";
                         row.Cells[2].Value = jopenOrd.response[s].leverage.ToString();
-                        row.Cells[3].Value = jopenOrd.response[s].direction.ToString().ToUpper();
-                        row.Cells[4].Value = "------";
-                        row.Cells[5].Value = "Cancel";
-                    //dataGridView2.Rows.Add(row);
-                    
+                        row.Cells[3].Value = jopenOrd.response[s].order_type_parameter.ToString();
+                        row.Cells[5].Value = jopenOrd.response[s].stop_loss.ToString();
+                        row.Cells[6].Value = jopenOrd.response[s].take_profit.ToString();
+                        row.Cells[7].Value = jopenOrd.response[s].direction.ToString().ToUpper();
+                        row.Cells[8].Value = "Cancel";
 
-                    dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Add(row)));
-
-                    if (s == (jopenOrd.response.Count - 1))
+                        if (jopenOrd.response[s].direction.ToString().ToUpper() == "LONG")
                         {
-                        //dataGridView2.AllowUserToAddRows = false;
-                        dataGridView2.Invoke(new Action(() => dataGridView2.AllowUserToAddRows = false));
-                    }
+                            row.Cells[4].Value = jopenOrderPrice.response[0].bid;
+                        }
+                        else
+                        {
+                            row.Cells[4].Value = jopenOrderPrice.response[0].ask;
+                        }
+
+                        dataGridView2.Invoke(new Action(() => dataGridView2.Rows.Add(row)));
+
+                        if (s == (jopenOrd.response.Count - 1))
+                        {
+                            dataGridView2.Invoke(new Action(() => dataGridView2.AllowUserToAddRows = false));                            
+                        }
                     }
                 }
+            }
         }
 
         private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView2.CurrentCell != null)
             {
-                if (dataGridView2.CurrentCell.ColumnIndex == 5)
+                if (dataGridView2.CurrentCell.ColumnIndex == 8)
                 {
                     using (var webClient = new System.Net.WebClient())
                     {
@@ -822,13 +852,19 @@ namespace WindowsFormsApp1
 
                         var jopenOrd = JsonConvert.DeserializeObject<dynamic>(openOrd);
 
-                        var orderidClose = jopenOrd.response[dataGridView2.CurrentCell.RowIndex].order_id;
+                        try
+                        {
+                            var orderidClose = jopenOrd.response[dataGridView2.CurrentCell.RowIndex].order_id;
 
-                        var closeOrd = webClient.DownloadString("https://1broker.io/api/v2/order/cancel.php?token=" + apiKey + "&order_id=" + orderidClose);
+                            var closeOrd = webClient.DownloadString("https://1broker.io/api/v2/order/cancel.php?token=" + apiKey + "&order_id=" + orderidClose);
 
-                        openPositions();
-                        openOrders();
+                            openPositions();
+                            openOrders();
+                        }
+                        catch
+                        {
 
+                        }
                         setUserInfo();
                         label1.Text = cpuTimeLeftPercent + "%";
                         labelBalance.Text = balance + " BTC";
@@ -850,12 +886,19 @@ namespace WindowsFormsApp1
 
                         var jopenPos = JsonConvert.DeserializeObject<dynamic>(openPos);
 
-                        var positionidClose = jopenPos.response[dataGridView1.CurrentCell.RowIndex].order_id;
+                        try
+                        {
+                            var positionidClose = jopenPos.response[dataGridView1.CurrentCell.RowIndex].position_id;
 
-                        var closeOrd = webClient.DownloadString("https://1broker.io/api/v2/position/close.php?token=" + apiKey + "&position_id=" + positionidClose);
+                            var closeOrd = webClient.DownloadString("https://1broker.io/api/v2/position/close.php?token=" + apiKey + "&position_id=" + positionidClose);
 
-                        openPositions();
-                        openOrders();
+                            openPositions();
+                            openOrders();
+                        }
+                        catch
+                        {
+
+                        }
 
                         setUserInfo();
                         label1.Text = cpuTimeLeftPercent + "%";
