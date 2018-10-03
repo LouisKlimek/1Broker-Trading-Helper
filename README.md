@@ -14,7 +14,7 @@ This Program gives you some extra features for Trading on 1Broker
 ### 3. On first startup an error will occur, just click "Ok"
 ![alt text](https://raw.githubusercontent.com/LouisKlimek/1Broker-Trading-Helper/master/howToInstallScreenshots/3.png)
 
-### 4. In the Program, click on "Options" and add your API Key which you get from https://1broker.io/trade/#access-management and then click "Save"
+### 4. In the Program, click on "Options" and add your API Key which you get from https://1broker.io/trade/#access-management and then click "Save". Now just restart the Program and your Done.
 ![alt text](https://raw.githubusercontent.com/LouisKlimek/1Broker-Trading-Helper/master/howToInstallScreenshots/4.png)
 
 
